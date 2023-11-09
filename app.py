@@ -2,7 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 
-pipe = pickle.load(open('Deepakkori45/Cricket-Score-Prediction/pipe.pkl','rb'))
+pipe = pickle.load(open('pipe.pkl','rb'))
 
 teams = ['Australia',
  'India',
