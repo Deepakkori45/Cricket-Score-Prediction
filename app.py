@@ -1,7 +1,7 @@
 import streamlit as st
 import pickle
 import pandas as pd
-
+encoder = pickle.load(open('encoder.pkl', 'rb'))
 pipe = pickle.load(open('pipe.pkl','rb'))
 
 teams = ['Australia',
@@ -65,10 +65,29 @@ last_five = st.number_input('Runs scored in last 5 overs')
 
 if st.button('Predict Score'):
     balls_left = 120 - (overs*6)
-    wickets_left = 10 -wickets
-    crr = current_score/overs
+    wickets_left = 10 - wickets
+    crr = current_score / overs
 
-    input_df = pd.DataFrame(
-     {'batting_team': [batting_team], 'bowling_team': [bowling_team],'city':city, 'current_score': [current_score],'balls_left': [balls_left], 'wickets_left': [wickets], 'crr': [crr], 'last_five': [last_five]})
+    # Create a DataFrame with the input data
+    input_df = pd.DataFrame({
+        'batting_team': [batting_team],
+        'bowling_team': [bowling_team],
+        'city': city,
+        'current_score': [current_score],
+        'balls_left': [balls_left],
+        'wickets_left': [wickets],
+        'crr': [crr],
+        'last_five': [last_five]
+    })
+
+    # Use the loaded encoder to transform the 'batting_team' column
+    input_df_encoded = encoder.transform(input_df[['batting_team']])
+
+    # Combine the encoded column with the rest of the input data
+    input_df = pd.concat([input_df.drop(columns=['batting_team']), pd.DataFrame(input_df_encoded.toarray())], axis=1)
+
+    # Predict using the loaded model
     result = pipe.predict(input_df)
+
     st.header("Predicted Score - " + str(int(result[0])))
+
