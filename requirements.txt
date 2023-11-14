@@ -1,5 +1,5 @@
 scikit-learn
-sklearn
+sklearn.linear_model.base
 numpy
 pandas
 xgboost
